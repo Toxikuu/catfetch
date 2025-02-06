@@ -9,7 +9,7 @@ const CAT: [&str; 4] =
 ];
 
 fn main() {
-    CAT.iter().zip(info::all().expect(":(")).for_each(|(c, i)| {
+    CAT.iter().zip(info::all()).for_each(|(c, i)| {
         println!("{c}  {i}\x1b[0m")
     });
 }

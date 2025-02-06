@@ -1,46 +1,41 @@
-use anyhow::{Context, Result};
 use std::{
     fs::read_to_string,
     env::var,
 };
 
-fn title() -> Result<String> {
-    Ok(
-        var("USER")? + "@" + &read_to_string("/etc/hostname")?
-    )
+fn title() -> String {
+    var("USER").unwrap() + "@" + read_to_string("/etc/hostname").unwrap().trim()
 }
 
-fn kernel() -> Result<String> {
-    Ok(
-        read_to_string("/proc/version")?
-            .split_whitespace()
-            .nth(2)
-            .context("Failed to get kernel version")?
-            .to_string()
-    )
+fn kernel() -> String {
+    read_to_string("/proc/version").unwrap()
+        .split_whitespace()
+        .nth(2)
+        .unwrap()
+        .to_string()
 }
 
-fn shell() -> Result<String> {
-    var("SHELL")?
+fn shell() -> String {
+    var("SHELL").unwrap()
         .rsplit_once('/')
         .map(|(_, sh)| sh.to_string())
-        .context("Invalid $SHELL")
+        .unwrap()
 }
 
-fn distro() -> Result<String> {
-    read_to_string("/etc/os-release")?
+fn distro() -> String {
+    read_to_string("/etc/os-release").unwrap()
         .lines()
         .find(|l| l.starts_with("PRETTY_NAME="))
         .and_then(|l| l.split_once('='))
         .map(|(_, v)| v.trim_matches('"').to_string())
-        .context("Failed to parse pretty name")
+        .unwrap()
 }
 
-pub fn all() -> Result<[String; 4]> {
-    Ok([
-        format!("\x1b[31;1m{}"    , title()?),
-        format!("\x1b[36;1mos  {}", distro()?),
-        format!("\x1b[36;1mkr  {}", kernel()?),
-        format!("\x1b[36;1msh  {}", shell()?),
-    ])
+pub fn all() -> [String; 4] {
+    [
+        format!("\x1b[31;1m{}"    , title ()),
+        format!("\x1b[36;1mos  {}", distro()),
+        format!("\x1b[36;1mkr  {}", kernel()),
+        format!("\x1b[36;1msh  {}", shell ()),
+    ]
 }
