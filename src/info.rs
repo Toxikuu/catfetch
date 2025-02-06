@@ -6,7 +6,7 @@ use std::{
 
 fn title() -> Result<String> {
     Ok(
-        var("USER")? + "@" + &read_to_string("/etc/hostname")?
+        var("USER")? + "@" + read_to_string("/etc/hostname")?.trim()
     )
 }
 
