@@ -1,6 +1,6 @@
 [package]
 name = "catfetch"
-version = "1.0.0"
+version = "1.0.1" # updated dependencies
 edition = "2024"
 
 [dependencies]
