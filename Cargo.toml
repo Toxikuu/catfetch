@@ -1,7 +1,13 @@
 [package]
 name = "catfetch"
-version = "1.0.1" # updated dependencies
+version = "1.1.0" # error handling is a feature now
 edition = "2024"
 
-[dependencies]
-anyhow = { version = "1.0.95", default-features = false }
+[features]
+default = [ "error_handling" ]
+error_handling = [ "dep:anyhow" ]
+
+[dependencies.anyhow]
+version = "1.0.95"
+default-features = false
+optional = true
