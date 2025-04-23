@@ -3,7 +3,7 @@
 **cute fetch script featuring a cat**
 
 ## Awesome screenshot
-[catfetch in action](screenshot.png)
+![catfetch in action](screenshot.png?raw=true "catfetch")
 
 ## Installation
 ```bash
