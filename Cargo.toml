@@ -1,6 +1,6 @@
 [package]
 name = "catfetch"
-version = "1.2.0" # makefile, fallbacks, tweaks
+version = "1.3.0" # tweaked configure, added version flag
 edition = "2024"
 authors = [ "Toxikuu" ]
 description = "cute fetch script featuring a cat"
