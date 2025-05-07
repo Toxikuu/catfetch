@@ -11,3 +11,6 @@
 make
 make install
 ```
+
+## todo
+- [ ] add fallbacks for hostname detection
