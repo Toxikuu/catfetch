@@ -2,10 +2,10 @@
 
 **cute fetch script featuring a cat**
 
-## Awesome screenshot
+## awesome screenshot
 ![catfetch in action](screenshot.png?raw=true "catfetch")
 
-## Installation
+## installation
 ```bash
 ./configure --prefix=/usr
 make
