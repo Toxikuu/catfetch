@@ -1,69 +1,62 @@
-#[cfg(feature = "error_handling")]
 use anyhow::{Context, Result};
 use std::{env::var, fs::read_to_string, process::Command};
 
-fn get_user() -> String {
-    var("USER").unwrap_or_else(|_| {
-        String::from_utf8_lossy(
-            &Command::new("whoami")
+fn get_user() -> Result<String> {
+    if let Ok(user) = var("USER") {
+        Ok(user)
+    } else {
+        Ok(String::from_utf8_lossy(
+            Command::new("whoami")
                 .output()
-                .expect("Couldn't detect user")
-                .stdout,
+                .context("Couldn't detect user")?
+                .stdout
+                .trim_ascii(),
         )
-        .to_string()
-    })
+        .to_string())
+    }
 }
 
-#[cfg(feature = "error_handling")]
 fn title() -> Result<String> {
-    Ok(get_user() + "@" + read_to_string("/etc/hostname")?.trim())
+    Ok(get_user()?
+        + "@"
+        + read_to_string("/etc/hostname")
+            .context("Couldn't read /etc/hostname")?
+            .trim())
 }
 
-#[cfg(not(feature = "error_handling"))]
-fn title() -> String {
-    get_user() + "@" + read_to_string("/etc/hostname").unwrap().trim()
-}
-
-#[cfg(feature = "error_handling")]
 fn kernel() -> Result<String> {
-    Ok(read_to_string("/proc/version")?
+    Ok(read_to_string("/proc/version")
+        .context("Couldn't read /proc/version")?
         .split_whitespace()
         .nth(2)
         .context("Failed to get kernel version")?
         .to_string())
 }
 
-#[cfg(not(feature = "error_handling"))]
-fn kernel() -> String {
-    read_to_string("/proc/version")
-        .unwrap()
-        .split_whitespace()
-        .nth(2)
-        .unwrap()
-        .to_string()
-}
-
-#[cfg(feature = "error_handling")]
 fn shell() -> Result<String> {
-    let shell = var("SHELL")?;
+    let shell = if let Ok(shell) = var("SHELL") {
+        shell
+    } else {
+        String::from_utf8_lossy(
+            Command::new("readlink")
+                .arg("/bin/sh")
+                .output()
+                .expect("Couldn't detect shell")
+                .stdout
+                .trim_ascii(),
+        )
+        .to_string()
+    };
+
     Ok(shell
         .rsplit_once('/')
         .map(|(_, sh)| sh.to_string())
         .unwrap_or(shell))
 }
 
-#[cfg(not(feature = "error_handling"))]
-fn shell() -> String {
-    let shell = var("SHELL").unwrap();
-    shell
-        .rsplit_once('/')
-        .map(|(_, sh)| sh.to_string())
-        .unwrap_or(shell)
-}
-
-#[cfg(feature = "error_handling")]
 fn distro() -> Result<String> {
-    read_to_string("/etc/os-release")?
+    read_to_string("/etc/os-release")
+        .context("Couldn't read /etc/os-release")?
         .lines()
         .find(|l| l.starts_with("PRETTY_NAME="))
         .and_then(|l| l.split_once('='))
@@ -71,18 +64,6 @@ fn distro() -> Result<String> {
         .context("Failed to parse pretty name")
 }
 
-#[cfg(not(feature = "error_handling"))]
-fn distro() -> String {
-    read_to_string("/etc/os-release")
-        .unwrap()
-        .lines()
-        .find(|l| l.starts_with("PRETTY_NAME="))
-        .and_then(|l| l.split_once('='))
-        .map(|(_, v)| v.trim_matches('"').to_string())
-        .unwrap()
-}
-
-#[cfg(feature = "error_handling")]
 pub fn all() -> Result<[String; 4]> {
     Ok([
         format!("\x1b[31;1m{}", title()?),
@@ -90,14 +71,4 @@ pub fn all() -> Result<[String; 4]> {
         format!("\x1b[36;1mkr  {}", kernel()?),
         format!("\x1b[36;1msh  {}", shell()?),
     ])
-}
-
-#[cfg(not(feature = "error_handling"))]
-pub fn all() -> [String; 4] {
-    [
-        format!("\x1b[31;1m{}", title()),
-        format!("\x1b[36;1mos  {}", distro()),
-        format!("\x1b[36;1mkr  {}", kernel()),
-        format!("\x1b[36;1msh  {}", shell()),
-    ]
 }

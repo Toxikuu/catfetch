@@ -13,7 +13,6 @@ const CAT: [&str; 4] = [
     "\x1b[37m  じしˍ,)ノ",
 ];
 
-#[cfg(feature = "error_handling")]
 fn main() {
     show_version();
 
@@ -23,15 +22,6 @@ fn main() {
 
     CAT.iter()
         .zip(info)
-        .for_each(|(c, i)| println!("{c}  {i}\x1b[0m"));
-}
-
-#[cfg(not(feature = "error_handling"))]
-fn main() {
-    show_version();
-
-    CAT.iter()
-        .zip(info::all())
         .for_each(|(c, i)| println!("{c}  {i}\x1b[0m"));
 }
 
