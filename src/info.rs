@@ -49,13 +49,12 @@ fn kernel() -> Result<String> {
 }
 
 fn shell() -> Option<String> {
-    let shell = if let Ok(shell) = var("SHELL") {
+    if let Ok(shell) = var("SHELL") {
         Some(shell)
     } else {
         cmd(&["readlink", "/bin/sh"])
-    };
-
-    shell.map(|sh| {
+    }
+    .map(|sh| {
         sh.rsplit_once('/')
             .map(|(_, sh)| sh.to_owned())
             .unwrap_or(sh)
