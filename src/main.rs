@@ -7,10 +7,10 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const NAME: &str = env!("CARGO_PKG_NAME");
 
 const CAT: [&str; 4] = [
-    "\x1b[37m  ╱|、     ",
-    "\x1b[37m (˚ˎ。7    ",
-    "\x1b[37m  |、˜〵   ",
-    "\x1b[37m  じしˍ,)ノ",
+    "\x1b[37m /|        ",
+    "\x1b[37m( . .7     ",
+    "\x1b[37m |,  `\\    ",
+    "\x1b[37m |,.l_,)_, ",
 ];
 
 fn main() {
