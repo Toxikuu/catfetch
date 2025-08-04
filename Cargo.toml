@@ -1,15 +1,21 @@
 [package]
 name = "catfetch"
-version = "1.5.0" # better fallbacks
+version = "1.5.1" # adjust release profile, update screenshot
 edition = "2024"
 authors = [ "Toxikuu" ]
 description = "cute fetch script featuring a cat"
 license = "GPL-3.0"
 
 [profile.release]
-strip = "symbols"
+codegen-units = 1
+opt-level = 3
+debug-assertions = false
+overflow-checks = false
+incremental = false
 lto = "fat"
+debug = "none"
 panic = "abort"
+strip = "symbols"
 
 [dependencies.anyhow]
 version = "1"
